@@ -43,6 +43,7 @@ suites:
       - recipe[pipeline::chefdk]
       - recipe[pipeline::knife]
       - recipe[pipeline::jobs]
+      - recipe[pipeline::ssl_verify]
     attributes:
       resolver:
         nameservers:
