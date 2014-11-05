@@ -1,0 +1,83 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  data_bags_path: test/fixtures/data_bags
+
+platforms:
+  - name: ubuntu-12.04
+    run_list:
+      - recipe[apt]
+  - name: centos-6.5
+    run_list:
+      - recipe[yum]
+  - name: centos-7.0
+    run_list:
+      - recipe[yum]
+
+suites:
+# Browse to the hostname and login 
+# Username: root 
+# Password: 5iveL!fe
+  - name: gitlab
+    run_list:
+      - recipe[gitlab::default]
+    attributes:
+    driver_config:
+      require_chef_omnibus: true
+      network:
+      - ["forwarded_port", {guest: 80, host: 8081}]
+      - ["private_network", {ip: "33.33.33.11"}]
+      customize:
+        memory: 2048
+        cpus: 2
+    excludes:
+      - centos-6.5
+
+  - name: pipeline
+    run_list:
+      - recipe[resolver]
+      - recipe[pipeline::jenkins]
+      - recipe[pipeline::chefdk]
+      - recipe[pipeline::knife]
+      - recipe[pipeline::jobs]
+    attributes:
+      resolver:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+    driver_config:
+      require_chef_omnibus: true
+      network:
+      - ["forwarded_port", {guest: 8080, host: 8082}]
+      - ["private_network", {ip: "33.33.33.12"}]
+      customize:
+        memory: 2048
+        cpus: 2
+    excludes:
+      - centos-7.0
+
+  - name: chef-server
+    run_list:
+      - recipe[chef-server-cluster::standalone]
+      - recipe[chef-server-cluster::create_admin]
+      - recipe[chef-server-cluster::create_org]
+    attributes:
+      admin:
+        username: flock
+        firstname: Florian
+        lastname: Lock
+        email: ops@example.com
+        password: DontUseThis4Real
+    driver_config:
+      require_chef_omnibus: true
+      network:
+      - ["forwarded_port", {guest: 80, host: 8083}]
+      - ["private_network", {ip: "33.33.33.13"}]
+      customize:
+        memory: 2048
+        cpus: 2
+    excludes:
+      - centos-7.0
