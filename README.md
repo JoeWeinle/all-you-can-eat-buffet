@@ -21,3 +21,7 @@ Manual steps
 3. login to chef-server and get /tmp/flock.pem
 4. add flock.pem contents to data bag in test/fixtures/data_bags/chef_orgs/test.json
 5. run kitchen converge OS
+
+The chef-repo jobs runs chef-client???
+
+The chef-repo job calls chef-client on the jenkins node in order for the pipeline recipes to read the Berksfile in the chef-repo workspace, iterate through it and create a job per cookbook. When using test-kitchen, there is no chef-client running, therefore if running everything locally, you will get an error on the chef-repo job and must run kitchen converge OS on your workstation to simulate the chef-client run.
