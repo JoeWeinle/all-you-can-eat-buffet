@@ -6,15 +6,13 @@ Follows the workflow methodology of:
 
 local development -> source control -> pipline -> chef server
 
-Includes cookboook:
-
 Uses test-kitchen to set up 3 vm's to demonstrate a Chef workflow.
 
 1. gitlab
 2. pipeline
 3. chef-server-cluster
 
-Manual steps
+Manual steps after converge:
 
 1. login to gitlab and change password
 2. create chef-repo and push chef-repo code
